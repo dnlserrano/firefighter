@@ -22,7 +22,8 @@ defmodule Firefighter.MixProject do
 
   defp deps do
     [
-      {:mox, "~> 1.0", only: [:test]}
+      {:mox, "~> 1.0", only: :test},
+      {:ex_doc, "~> 0.23", only: :dev, runtime: false}
     ]
   end
 
