@@ -6,7 +6,7 @@ Amazon Kinesis Data Firehose configurable queue supporting arbitrary adapters.
 
 When you want to integrate with Amazon Kinesis Data Firehose, you will most likely want to batch the requests you do in order to not hit Amazon limits. Hence, you'd ideally have an abstraction that allows you to push data, automatically buffering it and pumping data to any given stream from time to time. This is what `firefighter` does.
 
-You can configure different options (e.g., `:batch_size`, `:interval` and `:flush_graceful_period`) which should be tuned to your specific usage.
+You can configure different options (e.g., [`:batch_size`, `:interval` and `:flush_graceful_period`](https://github.com/dnlserrano/firefighter/blob/main/lib/firefighter.ex#L9-L11)) which should be tuned to your specific usage.
 
 ## Installation
 
@@ -32,7 +32,15 @@ config :firefighter, :adapter, Firefighter.Adapters.ExAws
 
 Adapters provide implementations for the underlying libraries you may use to pump data to Firehose. By default, we provide a logger adapter that just logs data. We also provide an adapter for [`ex_aws`](https://github.com/ex-aws/ex_aws) out of the box. It should be easy enough to expand on this to provide more adapters (e.g., a new adapter for [`aws-elixir`](https://github.com/aws-beam/aws-elixir)).
 
-## Example
+You can optionally set a delimiter in between each record to be pumped (defaults to `""`, i.e., the empty string):
+
+```elixir
+# config/config.exs
+
+config :firefighter, :delimiter, "\n"
+```
+
+### Example
 
 ```elixir
 # config/config.exs
@@ -75,6 +83,8 @@ defmodule Example do
   end
 end
 ```
+
+For a detailed example project using `firefighter`, check the [`example/`](./example) directory.
 
 ## License
 
