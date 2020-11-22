@@ -1,0 +1,23 @@
+version: '3.2'
+services:
+  lib:
+    build: .
+    command: tail -f /dev/null
+    volumes:
+      - .:/home/app/service
+
+  localstack:
+    image: localstack/localstack:0.12.2
+    container_name: localstack
+    restart: always
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,firehose,iam
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - PORT_WEB_UI=8010
+      - LAMBDA_EXECUTOR=docker
+      - KINESIS_ERROR_PROBABILITY=0.01
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DEFAULT_REGION=eu-west-1

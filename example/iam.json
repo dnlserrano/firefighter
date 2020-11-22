@@ -1,0 +1,21 @@
+{
+    "Role": {
+        "Path": "/",
+        "RoleName": "super-role",
+        "RoleId": "519cuuk49exij5eims36",
+        "Arn": "arn:aws:iam::000000000000:role/super-role",
+        "CreateDate": "2019-11-08T17:19:55.050Z",
+        "AssumeRolePolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Sid": "Stmt1572416334166",
+                    "Action": "*",
+                    "Effect": "Allow",
+                    "Resource": "*"
+                }
+            ]
+        },
+        "Description": "None"
+    }
+}
