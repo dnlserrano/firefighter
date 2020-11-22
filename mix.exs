@@ -7,6 +7,8 @@ defmodule Firefighter.MixProject do
       version: "0.1.0",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
+      description: description(),
+      package: package(),
       deps: deps(),
       xref: [exclude: [ExAws, ExAws.Firehose]]
     ]
@@ -21,6 +23,21 @@ defmodule Firefighter.MixProject do
   defp deps do
     [
       {:mox, "~> 1.0", only: [:test]}
+    ]
+  end
+
+  defp description do
+    "Amazon Kinesis Data Firehose configurable queue supporting arbitrary adapters"
+  end
+
+  defp package do
+    [
+      maintainers: ["Daniel Serrano"],
+      licenses: ["MIT"],
+      links: %{
+        github: "https://github.com/dnlserrano/firefighter",
+        personal: "https://dnlserrano.dev"
+      }
     ]
   end
 end
