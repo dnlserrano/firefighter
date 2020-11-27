@@ -18,6 +18,7 @@ defmodule Firefighter do
     :timer,
     :flush_grace_period,
     :flush_start,
+    :delimiter,
     :extra
   ]
 
@@ -29,6 +30,7 @@ defmodule Firefighter do
     batch_size = opts[:batch_size] || @default_batch_size
     interval = opts[:interval] || @default_interval
     flush_grace_period = opts[:flush_grace_period] || @default_flush_grace_period
+    delimiter = opts[:delimiter] || ""
     extra = opts[:extra] || []
     name = opts[:name] || __MODULE__
 
@@ -40,6 +42,7 @@ defmodule Firefighter do
       interval: interval,
       records: records,
       flush_grace_period: flush_grace_period,
+      delimiter: delimiter,
       extra: extra
     }
 
@@ -171,8 +174,8 @@ defmodule Firefighter do
 
   defp pump([], _state), do: :noop
 
-  defp pump(records, %__MODULE__{delivery_stream_name: delivery_stream_name, extra: extra}) do
-    case firehose().pump(delivery_stream_name, records, extra) do
+  defp pump(records, %__MODULE__{delivery_stream_name: delivery_stream_name, delimiter: delimiter, extra: extra}) do
+    case firehose().pump(delivery_stream_name, records, delimiter, extra) do
       {:ok, _result} ->
         Logger.debug("Successfully pumped data to Firehose", records: records)
 

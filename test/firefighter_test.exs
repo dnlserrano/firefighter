@@ -24,6 +24,7 @@ defmodule FirefighterTest do
                batch_size: 40,
                interval: 2_000,
                flush_grace_period: 30_000,
+               delimiter: "",
                extra: []
              },
              config
@@ -36,7 +37,8 @@ defmodule FirefighterTest do
         delivery_stream_name: "s3-stream",
         batch_size: 10,
         interval: 3_000,
-        flush_grace_period: 60_000
+        flush_grace_period: 60_000,
+        delimiter: "\n"
       )
 
     config = Firefighter.config(ff)
@@ -46,14 +48,15 @@ defmodule FirefighterTest do
                delivery_stream_name: "s3-stream",
                batch_size: 10,
                interval: 3_000,
-               flush_grace_period: 60_000
+               flush_grace_period: 60_000,
+               delimiter: "\n"
              },
              config
            )
   end
 
   test "push/2 enqueues records" do
-    expect(@firehose, :pump, 2, fn _stream, _records, _extra -> {:ok, "pumped"} end)
+    expect(@firehose, :pump, 2, fn _stream, _records, _delimiter, _extra -> {:ok, "pumped"} end)
 
     {:ok, ff} =
       Firefighter.start_link(delivery_stream_name: "s3-stream", batch_size: 5, interval: 50)
@@ -110,6 +113,7 @@ defmodule FirefighterTest do
                                   "sample-record-73-3",
                                   "sample-record-73-4"
                                 ],
+                                "\n",
                                 [] ->
       {:ok, "pumped"}
     end)
@@ -120,12 +124,18 @@ defmodule FirefighterTest do
                                   "sample-record-73-6",
                                   "sample-record-73-7"
                                 ],
+                                "\n",
                                 [] ->
       {:ok, "pumped"}
     end)
 
     {:ok, ff} =
-      Firefighter.start_link(delivery_stream_name: "s3-stream", batch_size: 5, interval: 50)
+      Firefighter.start_link(
+        delivery_stream_name: "s3-stream",
+        batch_size: 5,
+        interval: 50,
+        delimiter: "\n"
+      )
 
     0..7
     |> Enum.to_list()
@@ -148,7 +158,7 @@ defmodule FirefighterTest do
   end
 
   test "does not pump if nothing enqueued" do
-    expect(@firehose, :pump, 0, fn _stream, _records, _extra -> {:ok, "pumped"} end)
+    expect(@firehose, :pump, 0, fn _stream, _records, _delimiter, _extra -> {:ok, "pumped"} end)
 
     {:ok, ff} =
       Firefighter.start_link(delivery_stream_name: "s3-stream", batch_size: 5, interval: 50)
@@ -162,7 +172,7 @@ defmodule FirefighterTest do
   end
 
   test "when :interval kicks in but batch size not met, it still pumps that small batch" do
-    expect(@firehose, :pump, fn "s3-stream", ["sample-record-0"], [] -> {:ok, "pumped"} end)
+    expect(@firehose, :pump, fn "s3-stream", ["sample-record-0"], "", [] -> {:ok, "pumped"} end)
 
     {:ok, ff} =
       Firefighter.start_link(delivery_stream_name: "s3-stream", batch_size: 5, interval: 50)
@@ -173,7 +183,7 @@ defmodule FirefighterTest do
   end
 
   test "when it fails to pump data to firehose, logs error" do
-    expect(@firehose, :pump, fn "s3-stream", ["sample-record-0"], [] ->
+    expect(@firehose, :pump, fn "s3-stream", ["sample-record-0"], "", [] ->
       {:error, "pumping error"}
     end)
 
@@ -191,7 +201,7 @@ defmodule FirefighterTest do
   end
 
   test "when terminating, flushes data within :flush_grace_period" do
-    expect(@firehose, :pump, 3, fn "s3-stream", _records, [] -> {:ok, "pumped"} end)
+    expect(@firehose, :pump, 3, fn "s3-stream", _records, "", [] -> {:ok, "pumped"} end)
 
     {:ok, ff} =
       Firefighter.start_link(delivery_stream_name: "s3-stream", batch_size: 5, interval: 50)
@@ -204,7 +214,7 @@ defmodule FirefighterTest do
   end
 
   test "when terminating, logs error if it cannot flush all data within :flush_grace_period" do
-    expect(@firehose, :pump, 3, fn "s3-stream", _records, [] ->
+    expect(@firehose, :pump, 3, fn "s3-stream", _records, "", [] ->
       {:ok, "pumped"}
     end)
 
@@ -229,7 +239,7 @@ defmodule FirefighterTest do
   end
 
   defp prepare_stubs(_context) do
-    stub(@firehose, :pump, fn _stream, _records, _extra -> {:ok, "pumped"} end)
+    stub(@firehose, :pump, fn _stream, _records, _delimiter, _extra -> {:ok, "pumped"} end)
     :ok
   end
 end

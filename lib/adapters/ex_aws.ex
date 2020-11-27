@@ -4,11 +4,11 @@ if Code.ensure_loaded?(ExAws.Firehose) do
 
     @behaviour Firefighter.Adapter
 
-    def pump(stream_name, records, _opts) do
+    def pump(stream_name, records, delimiter, _opts) do
       record_batch =
         records
         |> Enum.map(fn record ->
-          record <> delimiter()
+          record <> delimiter
         end)
 
       result =
@@ -21,7 +21,5 @@ if Code.ensure_loaded?(ExAws.Firehose) do
         error -> {:error, error}
       end
     end
-
-    defp delimiter, do: Application.get_env(:firefighter, :delimiter, "")
   end
 end
