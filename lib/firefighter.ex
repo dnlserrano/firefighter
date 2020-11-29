@@ -49,6 +49,7 @@ defmodule Firefighter do
     GenServer.start_link(__MODULE__, state, name: name)
   end
 
+  @callback push(pid :: pid(), record :: binary()) :: :ok
   def push(pid, record) do
     GenServer.cast(pid, {:push, record})
   end
