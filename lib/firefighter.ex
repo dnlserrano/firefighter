@@ -175,7 +175,11 @@ defmodule Firefighter do
 
   defp pump([], _state), do: :noop
 
-  defp pump(records, %__MODULE__{delivery_stream_name: delivery_stream_name, delimiter: delimiter, extra: extra}) do
+  defp pump(records, %__MODULE__{
+         delivery_stream_name: delivery_stream_name,
+         delimiter: delimiter,
+         extra: extra
+       }) do
     case firehose().pump(delivery_stream_name, records, delimiter, extra) do
       {:ok, _result} ->
         Logger.debug("Successfully pumped data to Firehose", records: records)
