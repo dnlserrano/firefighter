@@ -20,7 +20,7 @@ The package can be installed by adding `firefighter` to your list of dependencie
 ```elixir
 def deps do
   [
-    {:firefighter, "~> 0.1.1"}
+    {:firefighter, "~> 0.2.0"}
   ]
 end
 ```
