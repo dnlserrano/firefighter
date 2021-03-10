@@ -12,12 +12,12 @@ defmodule ExecutionTest do
   test "start/1" do
     %Execution{
       event_uuid: event_uuid,
-      start_time: start_time,
+      event_time: event_time,
       data: data
     } = Execution.start(%{user_id: "user-1", post_id: "post-123"})
 
     assert is_binary(event_uuid)
-    assert is_integer(start_time)
+    assert is_integer(event_time)
     assert data.user_id == "user-1"
     assert data.post_id == "post-123"
   end

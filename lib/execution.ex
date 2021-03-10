@@ -8,7 +8,7 @@ defmodule Firefighter.Execution do
 
   defstruct [
     :event_uuid,
-    :start_time,
+    :event_time,
     :elapsed,
     data: %{}
   ]
@@ -16,7 +16,7 @@ defmodule Firefighter.Execution do
   def start(ids) do
     %__MODULE__{
       event_uuid: uuid(),
-      start_time: current_time_in_milliseconds(),
+      event_time: current_time_in_milliseconds(),
       data: ids
     }
   end
@@ -45,8 +45,8 @@ defmodule Firefighter.Execution do
     end
   end
 
-  def push(%__MODULE__{start_time: start_time} = execution, pid) when is_pid(pid) do
-    elapsed = current_time_in_milliseconds() - start_time
+  def push(%__MODULE__{event_time: event_time} = execution, pid) when is_pid(pid) do
+    elapsed = current_time_in_milliseconds() - event_time
     execution = %{execution | elapsed: elapsed / 1_000}
 
     record = to_record(execution)
