@@ -84,6 +84,25 @@ defmodule Example do
 end
 ```
 
+#### Alternative Usage
+
+As an alternative usage method, you might also decide to go with the `Firefighter.Execution` abstraction, provided out of the box:
+
+```elixir
+Execution.start(%{user_id: "user-1", post_id: "post-123"})
+|> Execution.record(%{age: 29})
+|> Execution.push(:my_firefighter)
+```
+
+
+You can also just hose it directly, without ceremony, if you're pumping a simple record that needs no composition:
+
+```elixir
+Execution.hose(:my_firefighter, %{user_id: "user-1", post_id: "post-123", age: 29})
+```
+
+You can also use pids instead of the process name (`:my_firefighter` in the example above).
+
 For a detailed example project using `firefighter`, check the [`example/`](./example) directory.
 
 ## License
