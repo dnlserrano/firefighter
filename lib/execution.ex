@@ -1,4 +1,11 @@
 defmodule Firefighter.Execution do
+  @type execution :: %__MODULE__{}
+
+  @callback start(data :: map) :: execution
+  @callback record(exec :: execution, data :: map) :: execution
+  @callback record_many(exec :: execution, name :: binary, data :: list | map) :: execution
+  @callback push(exec :: execution, pid :: any) :: execution
+
   defstruct [
     :event_uuid,
     :start_time,
