@@ -55,6 +55,10 @@ defmodule Firefighter.Execution do
     execution
   end
 
+  def hose(id, ids) do
+    start(ids) |> push(id)
+  end
+
   defp to_record(%__MODULE__{event_uuid: event_uuid, elapsed: elapsed, data: data}) do
     record =
       %{event_uuid: event_uuid, elapsed: elapsed}
