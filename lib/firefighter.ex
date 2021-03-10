@@ -115,8 +115,6 @@ defmodule Firefighter do
 
   @impl GenServer
   def handle_info(:tick, %__MODULE__{interval: interval} = state) do
-    Logger.debug("Ticking Firefighter")
-
     {batch, remaining} = get_records(state)
     pump(batch, state)
 
