@@ -5,6 +5,7 @@ defmodule Firefighter.Execution do
   @callback record(exec :: execution, data :: map) :: execution
   @callback record_many(exec :: execution, name :: binary, data :: list | map) :: execution
   @callback push(exec :: execution, pid :: any) :: execution
+  @callback hose(pid :: any, data :: map) :: execution
 
   defstruct [
     :event_uuid,
