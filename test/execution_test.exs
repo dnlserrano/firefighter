@@ -17,7 +17,7 @@ defmodule ExecutionTest do
     } = Execution.start(%{user_id: "user-1", post_id: "post-123"})
 
     assert is_binary(event_uuid)
-    assert is_integer(event_time)
+    assert is_struct(event_time)
     assert data.user_id == "user-1"
     assert data.post_id == "post-123"
   end

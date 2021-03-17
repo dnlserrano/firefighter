@@ -17,7 +17,7 @@ defmodule Firefighter.Execution do
   def start(ids) do
     %__MODULE__{
       event_uuid: uuid(),
-      event_time: current_time_in_milliseconds(),
+      event_time: current_time(),
       data: ids
     }
   end
@@ -46,10 +46,7 @@ defmodule Firefighter.Execution do
     end
   end
 
-  def push(%__MODULE__{event_time: event_time} = execution, pid) when is_pid(pid) do
-    elapsed = current_time_in_milliseconds() - event_time
-    execution = %{execution | elapsed: elapsed / 1_000}
-
+  def push(execution, pid) when is_pid(pid) do
     record = to_record(execution)
     firefighter().push(pid, record)
 
@@ -60,16 +57,20 @@ defmodule Firefighter.Execution do
     start(ids) |> push(id)
   end
 
-  defp to_record(%__MODULE__{event_uuid: event_uuid, elapsed: elapsed, data: data}) do
-    record =
-      %{event_uuid: event_uuid, elapsed: elapsed}
-      |> Map.merge(data)
-
-    json().encode!(record)
+  defp to_record(
+         %__MODULE__{event_uuid: event_uuid, event_time: event_time, data: data} = execution
+       ) do
+    %{
+      event_uuid: event_uuid,
+      event_time: event_time |> DateTime.to_iso8601(),
+      elapsed: DateTime.diff(current_time(), event_time)
+    }
+    |> Map.merge(data)
+    |> json().encode!()
   end
 
   defp uuid, do: UUID.uuid4()
-  defp current_time_in_milliseconds, do: System.monotonic_time(:millisecond)
+  defp current_time, do: DateTime.utc_now()
 
   defp firefighter, do: Application.get_env(:firefighter, :firefighter, Firefighter)
   defp json, do: Application.get_env(:firefighter, :json, Jason)
