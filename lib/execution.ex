@@ -57,9 +57,7 @@ defmodule Firefighter.Execution do
     start(ids) |> push(id)
   end
 
-  defp to_record(
-         %__MODULE__{event_uuid: event_uuid, event_time: event_time, data: data} = execution
-       ) do
+  defp to_record(%__MODULE__{event_uuid: event_uuid, event_time: event_time, data: data}) do
     %{
       event_uuid: event_uuid,
       event_time: event_time |> DateTime.to_iso8601(),
