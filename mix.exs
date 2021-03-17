@@ -4,7 +4,7 @@ defmodule Firefighter.MixProject do
   def project do
     [
       app: :firefighter,
-      version: "0.2.4",
+      version: "0.2.5",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       description: description(),
