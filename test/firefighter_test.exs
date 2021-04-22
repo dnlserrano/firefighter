@@ -238,6 +238,31 @@ defmodule FirefighterTest do
     assert log =~ ~r/Stopping flush after grace period/
   end
 
+  test "when terminating via explicit info call with :EXIT" do
+    expect(@firehose, :pump, 3, fn "s3-stream", _records, "", [] ->
+      {:ok, "pumped"}
+    end)
+
+    log =
+      capture_log(fn ->
+        {:ok, ff} =
+          Firefighter.start_link(
+            delivery_stream_name: "s3-stream",
+            batch_size: 5,
+            interval: 50,
+            flush_grace_period: 10
+          )
+
+        for i <- 0..30, do: Firefighter.push(ff, "sample-record-175-#{i}")
+
+        Process.sleep(110)
+        send(ff, {:EXIT, self(), :normal})
+        Process.sleep(300)
+      end)
+
+    assert log =~ ~r/Stopping flush after grace period/
+  end
+
   defp prepare_stubs(_context) do
     stub(@firehose, :pump, fn _stream, _records, _delimiter, _extra -> {:ok, "pumped"} end)
     :ok
