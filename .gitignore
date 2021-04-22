@@ -25,3 +25,6 @@ service-*.tar
 
 # Temporary files for e.g. tests
 /tmp
+
+# expublish
+RELEASE.md

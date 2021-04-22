@@ -23,7 +23,7 @@ The package can be installed by adding `firefighter` to your list of dependencie
 ```elixir
 def deps do
   [
-    {:firefighter, "~> 0.2.6"}
+    {:firefighter, "~> 0.1.2"} # check most recent version in this project's mix.exs
   ]
 end
 ```
