@@ -123,6 +123,11 @@ defmodule Firefighter do
   end
 
   @impl GenServer
+  def handle_info({:EXIT, _from, :normal = reason}, state) do
+    {:stop, reason, state}
+  end
+
+  @impl GenServer
   def terminate(reason, %__MODULE__{timer: timer} = state) do
     Process.cancel_timer(timer)
     Logger.debug("Terminating Firefighter", reason: reason)
