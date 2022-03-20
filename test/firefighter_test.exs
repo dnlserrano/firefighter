@@ -225,12 +225,12 @@ defmodule FirefighterTest do
             delivery_stream_name: "s3-stream",
             batch_size: 5,
             interval: 50,
-            flush_grace_period: 10
+            flush_grace_period: 5
           )
 
         for i <- 0..30, do: Firefighter.push(ff, "sample-record-175-#{i}")
 
-        Process.sleep(110)
+        Process.sleep(105)
         Process.exit(ff, :normal)
         Process.sleep(300)
       end)
