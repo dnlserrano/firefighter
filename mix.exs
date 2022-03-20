@@ -22,12 +22,12 @@ defmodule Firefighter.MixProject do
 
   defp deps do
     [
-      {:mox, "~> 1.0", only: :test},
-      {:ex_doc, "~> 0.23", only: :dev, runtime: false},
       {:elixir_uuid, "~> 1.2"},
       {:ex_aws_firehose, ">= 0.0.0", optional: true},
+      {:ex_doc, "~> 0.23", only: :dev, runtime: false},
       {:expublish, ">= 0.0.0", only: :dev},
       {:jason, "~> 1.2"},
+      {:mox, "~> 1.0", only: :test}
     ]
   end
 
