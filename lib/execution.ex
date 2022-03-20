@@ -1,4 +1,6 @@
 defmodule Firefighter.Execution do
+  require Logger
+
   @type execution :: %__MODULE__{}
 
   @callback start(data :: map) :: execution
@@ -58,13 +60,23 @@ defmodule Firefighter.Execution do
   end
 
   defp to_record(%__MODULE__{event_uuid: event_uuid, event_time: event_time, data: data}) do
-    %{
-      event_uuid: event_uuid,
-      event_time: event_time |> DateTime.to_iso8601(),
-      elapsed: DateTime.diff(current_time(), event_time)
-    }
-    |> Map.merge(data)
-    |> json().encode!()
+    record =
+      %{
+        event_uuid: event_uuid,
+        event_time: event_time |> DateTime.to_iso8601(),
+        elapsed: DateTime.diff(current_time(), event_time)
+      }
+      |> Map.merge(data)
+      |> json().encode()
+
+    case record do
+      {:ok, json_string} ->
+        json_string
+
+      {:error, error} ->
+        Logger.error("Failed to JSON encode", error: error, record: inspect(record))
+        nil
+    end
   end
 
   defp uuid, do: UUID.uuid4()

@@ -1,7 +1,8 @@
 import Mox
 
 defmodule JasonBehaviour do
-  @callback encode!(map()) :: binary()
+  @callback encode(any()) ::
+              {:ok, String.t()} | {:error, Jason.EncodeError.t() | Exception.t()}
 end
 
 defmock(Firefighter.FirehoseMock, for: Firefighter.Adapter)

@@ -89,6 +89,11 @@ defmodule Firefighter do
   end
 
   @impl GenServer
+  def handle_cast({:push, nil}, %__MODULE__{} = state) do
+    {:noreply, state}
+  end
+
+  @impl GenServer
   def handle_cast({:push, record}, %__MODULE__{records: records} = state) do
     records = :queue.in(record, records)
     {:noreply, %{state | records: records}}
