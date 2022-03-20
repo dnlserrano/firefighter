@@ -26,8 +26,8 @@ defmodule Firefighter.MixProject do
       {:ex_doc, "~> 0.23", only: :dev, runtime: false},
       {:elixir_uuid, "~> 1.2"},
       {:ex_aws_firehose, ">= 0.0.0", optional: true},
+      {:expublish, ">= 0.0.0", only: :dev},
       {:jason, "~> 1.2"},
-      {:expublish, ">= 0.0.0"}
     ]
   end
 
