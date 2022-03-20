@@ -1,6 +1,6 @@
 # 👨‍🚒 firefighter
 
-[![Build Status](https://travis-ci.com/dnlserrano/firefighter.svg?branch=main)](https://travis-ci.com/dnlserrano/firefighter)
+![Build Status](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
 [![Hex pm](http://img.shields.io/hexpm/v/firefighter.svg?style=flat)](https://hex.pm/packages/firefighter)
 
 Amazon Kinesis Data Firehose configurable queue supporting arbitrary adapters.
