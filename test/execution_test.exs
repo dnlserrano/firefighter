@@ -59,7 +59,7 @@ defmodule ExecutionTest do
   test "push/2 to ref by pid" do
     {:ok, pid} = Firefighter.start_link(delivery_stream_name: "s3-stream", name: :my_firefighter)
     expect(@firefighter, :push, fn ^pid, _record -> :ok end)
-    expect(@json, :encode!, fn %{user_id: "user-1", post_id: "post-123"} -> :ok end)
+    expect(@json, :encode, fn %{user_id: "user-1", post_id: "post-123"} -> {:ok, "json"} end)
 
     Execution.start(%{user_id: "user-1", post_id: "post-123"})
     |> Execution.push(pid)
@@ -70,7 +70,7 @@ defmodule ExecutionTest do
   test "push/2 to ref by process name" do
     {:ok, pid} = Firefighter.start_link(delivery_stream_name: "s3-stream", name: :my_firefighter)
     expect(@firefighter, :push, fn ^pid, _record -> :ok end)
-    expect(@json, :encode!, fn %{user_id: "user-1", post_id: "post-123", age: 29} -> :ok end)
+    expect(@json, :encode, fn %{user_id: "user-1", post_id: "post-123", age: 29} -> {:ok, "json"} end)
 
     Execution.start(%{user_id: "user-1", post_id: "post-123"})
     |> Execution.record(%{age: 29})
@@ -88,10 +88,22 @@ defmodule ExecutionTest do
     end
   end
 
+  test "push/2 does not crash if data fails to serialize" do
+    {:ok, pid} = Firefighter.start_link(delivery_stream_name: "s3-stream", name: :my_firefighter)
+    expect(@firefighter, :push, fn ^pid, _record -> :ok end)
+    expect(@json, :encode, fn _data -> {:error, "failed to serialize json"} end)
+
+    Execution.start(%{user_id: "user-1", post_id: "post-123"})
+    |> Execution.record(%{age: 29})
+    |> Execution.push(:my_firefighter)
+
+    Process.exit(pid, :kill)
+  end
+
   test "hose/2 pushes directly to given ref by pid" do
     {:ok, pid} = Firefighter.start_link(delivery_stream_name: "s3-stream", name: :my_firefighter)
     expect(@firefighter, :push, fn ^pid, _record -> :ok end)
-    expect(@json, :encode!, fn %{user_id: "user-1", post_id: "post-123"} -> :ok end)
+    expect(@json, :encode, fn %{user_id: "user-1", post_id: "post-123"} -> {:ok, "json"} end)
 
     Execution.hose(pid, %{user_id: "user-1", post_id: "post-123"})
 
@@ -101,7 +113,7 @@ defmodule ExecutionTest do
   test "hose/2 pushes directly to given ref by process name" do
     {:ok, pid} = Firefighter.start_link(delivery_stream_name: "s3-stream", name: :my_firefighter)
     expect(@firefighter, :push, fn ^pid, _record -> :ok end)
-    expect(@json, :encode!, fn %{user_id: "user-1", post_id: "post-123", age: 29} -> :ok end)
+    expect(@json, :encode, fn %{user_id: "user-1", post_id: "post-123", age: 29} -> {:ok, "json"} end)
 
     Execution.hose(:my_firefighter, %{user_id: "user-1", post_id: "post-123", age: 29})
 
@@ -109,7 +121,7 @@ defmodule ExecutionTest do
   end
 
   defp prepare_stubs(_context) do
-    stub(@json, :encode!, fn map -> Jason.encode!(map) end)
+    stub(@json, :encode, fn map -> Jason.encode(map) end)
     :ok
   end
 end
